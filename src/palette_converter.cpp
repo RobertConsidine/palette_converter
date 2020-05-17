@@ -42,22 +42,21 @@ Palette paletteFromFile(const std::string& path) {
   }
 
   Palette palette;
-
-  char buffer[32];
-  std::stringstream ss;
-  uint32_t value;
+  std::string line;
 
   while (!fin.eof()) {
-    fin.getline(buffer, sizeof(buffer));
+    std::getline(fin, line);
 
-    ss.str("");
-    ss.clear();
+    size_t i = line.find('#');
+    if (i != line.npos) {
+      line.resize(i);
+    }
 
-    ss << std::hex << buffer;
-    ss >> value;
-    if (!ss.fail()) {
+    try {
+      uint32_t value = std::stoi(line, nullptr, 16);
       palette.push_back(Colour(value));
     }
+    catch (std::invalid_argument& e) {}
   }
 
   return palette;
